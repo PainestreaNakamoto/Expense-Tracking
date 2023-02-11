@@ -115,6 +115,21 @@ func (self accountRepository) MakeWithDrawal(expense_data ExpenseTracking) (*Exp
 		if err != nil {
 			return nil, err
 		}
+		query = "select overall_balance from accounts where account_id=?"
+		account_data := Account{}
+		err = self.db.Get(&account_data, query, expense_data.AccountID)
+		fmt.Println(account_data)
+		if err != nil {
+			return nil, err
+		}
+		query = "update accounts set overall_balance=? WHERE account_id=?"
+		account_data.OverAllBalance -= expense_data.Expense
+		fmt.Println(account_data.OverAllBalance)
+		result, err = self.db.Exec(query, account_data.OverAllBalance, expense_data.AccountID)
+		_ = result
+		if err != nil {
+			return nil, err
+		}
 
 		return &expense_data, nil
 	}
