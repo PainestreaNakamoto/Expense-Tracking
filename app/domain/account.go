@@ -9,13 +9,13 @@ type AccountEntity struct {
 
 type AccountInterface interface {
 	// For only open new account
-	OpenNewAccount(account AccountEntity) (string, error)
+	OpenNewAccount(account AccountEntity) (*AccountEntity, error)
 
 	// For get infomation of account such as account info and transaction of account
-	AccountInfo(account_id int) (string, error)
-	Transaction(account_id int) (string, error)
+	AccountInfo(account_id int) (*AccountEntity, error)
+	Transaction(account_id int) ([]ExpenseTrackingEntity, error)
 
 	// For handle or interactive with account and record expense tracking
-	Deposit(account_id int, expense_tracking ExpenseTrackingEntity) (string, error)
-	WithDraw(account_id int, expense_tracking ExpenseTrackingEntity) (string, error)
+	Deposit(ExpenseTrackingEntity) (*ExpenseTrackingEntity, error)
+	WithDraw(ExpenseTrackingEntity) (*ExpenseTrackingEntity, error)
 }
