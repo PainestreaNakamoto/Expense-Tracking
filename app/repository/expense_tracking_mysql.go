@@ -13,7 +13,18 @@ func InitializeExpenseTrackingRepositroyMySQL(db *sqlx.DB) ExpenseTrackingReposi
 }
 
 func (self expenseTrackingRepositoryMySQL) NextIdentity(expense_item ExpenseTracking) (*ExpenseTracking, error) {
-	return nil, nil
+	query := "insert into expenses_tracking (date_time, title, account_id, classification, income, expense, overall_balance) values (?,?,?,?,?,?,?)"
+	result, err := self.db.Exec(query, expense_item.DateTime, expense_item.Title, expense_item.AccountID, expense_item.Classification, expense_item.Income, expense_item.Expense, expense_item.OverAllBalance)
+	if err != nil {
+		return nil, err
+	}
+	id, err := result.LastInsertId()
+	if err != nil {
+		return nil, err
+	}
+	expense_item.ID = int(id)
+
+	return &expense_item, nil
 }
 
 func (self expenseTrackingRepositoryMySQL) GetAll() ([]ExpenseTracking, error) {
