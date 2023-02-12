@@ -1,12 +1,12 @@
 package main
 
 import (
-	"fmt"
-	"time"
-
 	"github.com/PainestreaNakamoto/Expense-Tracking/domain"
+	"github.com/PainestreaNakamoto/Expense-Tracking/handler"
+	_ "github.com/PainestreaNakamoto/Expense-Tracking/handler"
 	"github.com/PainestreaNakamoto/Expense-Tracking/repository"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/gofiber/fiber/v2"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -21,18 +21,13 @@ func main() {
 
 	account_repository := repository.InitializeAccountRepositroyMySQL(db)
 	account_domain := domain.InitializeAccountDomain(account_repository)
-	new_record := domain.ExpenseTrackingEntity{
-		DateTime:       time.Now().Format("2006-01-2 15:04:05"),
-		Title:          "Buy a water",
-		AccountID:      "848654",
-		Classification: "Daily use",
-		Income:         0,
-		Expense:        5,
-	}
-	data, err := account_domain.WithDraw(new_record)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(data)
+	account_handler := handler.InitializeAccountHandler(account_domain)
+
+	app := fiber.New()
+	api := app.Group("/api")
+	v1 := api.Group("/v1")
+	account_group := v1.Group("/account")
+	account_group.Get("/info/:account_id", account_handler.AccountInfomation)
+	app.Listen(":8000")
 
 }

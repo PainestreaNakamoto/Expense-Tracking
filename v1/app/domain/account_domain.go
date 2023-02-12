@@ -1,6 +1,8 @@
 package domain
 
 import (
+	"errors"
+
 	"github.com/PainestreaNakamoto/Expense-Tracking/repository"
 )
 
@@ -34,7 +36,7 @@ func (self accountDomain) AccountInfo(account_id int) (*AccountEntity, error) {
 		OverAllBalance: account_from_db.OverAllBalance,
 	}
 	if err != nil {
-		return nil, err
+		return nil, errors.New("Account not found")
 	}
 	return &account_infomation, nil
 }
